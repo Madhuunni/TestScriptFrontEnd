@@ -1,0 +1,56 @@
+<main class="page-shell">
+  <header class="hero">
+    <div>
+      <p class="eyebrow">Test Script Function</p>
+      <h1>Prompt-based test runner</h1>
+      <p class="subtitle">
+        Submit prompts to the backend handler and review each row's test results side by side.
+      </p>
+    </div>
+    <button class="add-button" type="button" (click)="addPromptRow()">+ Add prompt</button>
+  </header>
+
+  <section class="prompt-grid" aria-label="Prompt requests and test results">
+    <article class="prompt-row" *ngFor="let row of rows; trackBy: trackByRowId">
+      <section class="prompt-panel" [attr.aria-labelledby]="'prompt-title-' + row.id">
+        <div class="panel-heading">
+          <h2 [id]="'prompt-title-' + row.id">Prompt {{ row.id }}</h2>
+          <span class="status" *ngIf="row.isLoading">Running...</span>
+        </div>
+
+        <label [for]="'prompt-' + row.id">Prompt text</label>
+        <textarea
+          [id]="'prompt-' + row.id"
+          name="prompt-{{ row.id }}"
+          [(ngModel)]="row.prompt"
+          placeholder="Describe the test cases or script you want the backend to run"
+          rows="8"
+        ></textarea>
+
+        <p class="error" *ngIf="row.error">{{ row.error }}</p>
+
+        <button
+          class="submit-button"
+          type="button"
+          [disabled]="row.isLoading"
+          (click)="submitPrompt(row)"
+        >
+          {{ row.isLoading ? 'Submitting...' : 'Submit prompt' }}
+        </button>
+      </section>
+
+      <section class="response-panel" [attr.aria-labelledby]="'response-title-' + row.id">
+        <div class="panel-heading">
+          <h2 [id]="'response-title-' + row.id">Test results {{ row.id }}</h2>
+        </div>
+
+        <pre *ngIf="row.response; else emptyResponse">{{ row.response }}</pre>
+        <ng-template #emptyResponse>
+          <div class="empty-state">
+            Results returned by the backend handler will appear here for this row.
+          </div>
+        </ng-template>
+      </section>
+    </article>
+  </section>
+</main>
